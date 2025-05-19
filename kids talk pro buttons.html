@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Kids Talk Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            height: 100%;
+            overflow: auto;
+        }
+        body {
+            font-family: 'Nunito', 'Poppins', sans-serif;
+        }
+        .bg-wave-pattern {
+            background-image: linear-gradient(to bottom, #f0f9ff, #e0f2fe);
+        }
+        .blob-effect {
+            position: absolute;
+            z-index: -1;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.7;
+        }
+        .blob1 {
+            width: 280px;
+            height: 280px;
+            background-color: #fcd34d;
+            top: -40px;
+            left: -40px;
+        }
+        .blob2 {
+            width: 230px;
+            height: 230px;
+            background-color: #6ee7b7;
+            bottom: -70px;
+            right: -50px;
+        }
+        .blob3 {
+            width: 180px;
+            height: 180px;
+            background-color: #a5f3fc;
+            top: 15%;
+            right: -30px;
+        }
+        .button-select {
+            padding: 0.8rem 2rem;
+            border-radius: 0.75rem;
+            font-size: 1.1rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s;
+            margin: 0.5rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 150px;
+        }
+        .button-select:hover {
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+        }
+        .button-select:active {
+            transform: translateY(0) scale(1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .button-expert {
+            background-image: linear-gradient(to bottom right, #f472b6, #8b5cf6);
+            color: white;
+        }
+        .button-expert:hover {
+            background-image: linear-gradient(to bottom right, #ec4899, #7c3aed);
+        }
+        .button-learner {
+            background-image: linear-gradient(to bottom right, #3b82f6, #22c55e);
+            color: white;
+        }
+        .button-learner:hover {
+            background-image: linear-gradient(to bottom right, #2563eb, #16a34a);
+        }
+        input[type="text"], input[type="password"] {
+            padding: 0.8rem 1rem;
+            border-radius: 0.75rem;
+            border: 2px solid #e0f2fe;
+            background-color: white;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.06);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        input[type="text"]:focus, input[type="password"]:focus {
+            outline: none;
+            border-color: #38bdf8;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        button {
+            padding: 0.8rem 2rem;
+            border-radius: 0.75rem;
+            font-size: 1.1rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s;
+        }
+        button:hover {
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+        }
+        button:active {
+            transform: translateY(0) scale(1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .message-box {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 500;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+            animation: slideIn 0.3s ease-out, slideOut 0.3s 2.5s ease-in forwards;
+            opacity: 0;
+            z-index: 100;
+        }
+        .message-box.error {
+            background-color: #fecaca;
+            color: #b91c1c;
+        }
+        .message-box.success {
+            background-color: #dcf8c6;
+            color: #15803d;
+        }
+        .message-box.info {
+            background-color: #e0f7fa;
+            color: #06b6d4;
+        }
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+        #loginForm {
+            display: none;
+        }
+        #selectionButtons {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #expertForm {
+            display: none;
+        }
+        #learnerForm {
+            display: none;
+        }
+        #favoriteTopicsForm {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-wave-pattern min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+    <div class="blob-effect blob1"></div>
+    <div class="blob-effect blob2"></div>
+    <div class="blob-effect blob3 hidden md:block"></div>
+
+    <main class="bg-white/90 backdrop-blur-md p-6 sm:p-8 md:p-10 rounded-2xl shadow-2xl w-full max-w-md z-10">
+        <header class="text-center mb-6">
+            <div class="inline-block p-4 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mb-4 shadow-md">
+                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-12 w-12">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14l-5-4.87L8.91 8.26 12 2z" fill="yellow"/>
+                </svg>
+            </div>
+            <h1 class="text-3xl sm:text-4xl font-bold text-gray-800">
+                Kids <span class="text-blue-500">Talk</span> <span class="text-green-500">Pro</span>
+            </h1>
+            <p class="text-gray-600 mt-2 text-sm sm:text-base">Welcome back! Let's have some fun!</p>
+        </header>
+
+        <div id="selectionButtons" class="text-center mb-6">
+            <button id="expertButton" class="button-select button-expert">Expert</button>
+            <button id="learnerButton" class="button-select button-learner">Learner</button>
+        </div>
+
+        <form id="expertForm" class="space-y-4" style="display: none;">
+            <div>
+                <label for="expertUsername" class="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                <input type="text" name="expertUsername" id="expertUsername"
+                       class="w-full"
+                       placeholder="Enter your username" required>
+            </div>
+            <div>
+                <label for="expertPassword" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                <input type="password" name="expertPassword" id="expertPassword"
+                       class="w-full"
+                       placeholder="Enter your password" required>
+            </div>
+            <div>
+                <label for="workplace" class="block text-sm font-medium text-gray-700 mb-1">Where do you work?</label>
+                <input type="text" name="workplace" id="workplace"
+                       class="w-full"
+                       placeholder="Enter your workplace" required>
+            </div>
+            <div>
+                <label for="subject" class="block text-sm font-medium text-gray-700 mb-1">Subject</label>
+                <input type="text" name="subject" id="subject"
+                       class="w-full"
+                       placeholder="Enter subject" required>
+            </div>
+            <button type="button" id="expertNext" class="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                Next
+            </button>
+        </form>
+
+        <form id="learnerForm" class="space-y-4" style="display: none;">
+            <div>
+                <label for="learnerUsername" class="block text-sm font-medium text-gray-700 mb-1">Username or Email</label>
+                <input type="text" name="learnerUsername" id="learnerUsername"
+                       class="w-full"
+                       placeholder="your.name@example.com" required>
+            </div>
+
+            <div>
+                <label for="learnerPassword" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                <input type="password" name="learnerPassword" id="learnerPassword"
+                       class="w-full"
+                       placeholder="Your super secret password" required>
+            </div>
+
+            <div>
+                <button type="button" id="learnerNext"
+                        class="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Next
+                </button>
+            </div>
+        </form>
+
+        <form id="favoriteTopicsForm" class="space-y-4" style="display: none;">
+            <div>
+                <label for="topic1" class="block text-sm font-medium text-gray-700 mb-1">Favorite Topic 1</label>
+                <input type="text" name="topic1" id="topic1"
+                       class="w-full"
+                       placeholder="Enter your favorite topic" required>
+            </div>
+            <div>
+                <label for="topic2" class="block text-sm font-medium text-gray-700 mb-1">Favorite Topic 2</label>
+                <input type="text" name="topic2" id="topic2"
+                       class="w-full"
+                       placeholder="Enter another topic" required>
+            </div>
+            <div>
+                <label for="topic3" class="block text-sm font-medium text-gray-700 mb-1">Favorite Topic 3</label>
+                <input type="text" name="topic3" id="topic3"
+                       class="w-full"
+                       placeholder="Enter one more topic" required>
+            </div>
+            <button type="button" id="topicsNext"
+                    class="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                Next
+            </button>
+        </form>
+
+        <footer class="mt-6 text-center">
+            <p class="text-sm text-gray-600">
+                Don't have an account?
+                <a href="#" class="font-medium text-green-600 hover:text-green-500 transition duration-150 ease-in-out">
+                    Sign up here!
+                </a>
+            </p>
+        </footer>
+
+        <div id="messageBox" class="message-box hidden">
+            <p id="messageText"></p>
+        </div>
+    </main>
+
+    <script>
+        // Basic form submission handler
+        const messageBox = document.getElementById('messageBox');
+        const messageText = document.getElementById('messageText');
+        const expertButton = document.getElementById('expertButton');
+        const learnerButton = document.getElementById('learnerButton');
+        const selectionButtonsDiv = document.getElementById('selectionButtons');
+        const expertForm = document.getElementById('expertForm');
+        const learnerForm = document.getElementById('learnerForm');
+        const expertNextButton = document.getElementById('expertNext');
+        const learnerNextButton = document.getElementById('learnerNext');
+        const favoriteTopicsForm = document.getElementById('favoriteTopicsForm');
+        const topicsNextButton = document.getElementById('topicsNext');
+
+        let userType = "";
+        let username = "";
+
+        expertButton.addEventListener('click', function() {
+            selectionButtonsDiv.style.display = 'none';
+            expertForm.style.display = 'block';
+            learnerForm.style.display = 'none';
+            favoriteTopicsForm.style.display = 'none';
+            // Adjust main element height
+            const mainElement = document.querySelector('main');
+            mainElement.style.height = 'auto';
+        });
+
+        learnerButton.addEventListener('click', function() {
+            selectionButtonsDiv.style.display = 'none';
+            learnerForm.style.display = 'block';
+            expertForm.style.display = 'none';
+            favoriteTopicsForm.style.display = 'none';
+            // Adjust main element height
+            const mainElement = document.querySelector('main');
+            mainElement.style.height = 'auto';
+        });
+
+
+        expertNextButton.addEventListener('click', function(event) {
+            event.preventDefault();
+
+            username = document.getElementById('expertUsername').value;
+            const password = document.getElementById('expertPassword').value;
+            const workplace = document.getElementById('workplace').value;
+            const subject = document.getElementById('subject').value;
+
+
+            if (!username || !password || !workplace || !subject) {
+                showMessage("Please fill in all fields!", "error");
+                return;
+            }
+
+            console.log('Attempting login with:', { username, password, workplace, subject });
+            showMessage("Logging in as Expert...", "info");
+            userType = "expert";
+
+            setTimeout(() => {
+                expertForm.style.display = 'none';
+                favoriteTopicsForm.style.display = 'block';
+                //handleLoginSuccess(username, "expert");
+            }, 1500);
+        });
+
+        learnerNextButton.addEventListener('click', function(event) {
+            event.preventDefault();
+
+            username = document.getElementById('learnerUsername').value;
+            const password = document.getElementById('learnerPassword').value;
+
+
+            if (!username || !password) {
+                showMessage("Please fill in all fields!", "error");
+                return;
+            }
+
+            console.log('Attempting login with:', { username, password});
+            showMessage("Logging in as Learner...", "info");
+            userType = "learner";
+
+            setTimeout(() => {
+                learnerForm.style.display = 'none';
+                favoriteTopicsForm.style.display = 'block';
+                //handleLoginSuccess(username, "learner");
+            }, 1500);
+        });
+
+        topicsNextButton.addEventListener('click', function(event) {
+            event.preventDefault();
+
+            const topic1 = document.getElementById('topic1').value;
+            const topic2 = document.getElementById('topic2').value;
+            const topic3 = document.getElementById('topic3').value;
+
+            if (!topic1 || !topic2 || !topic3) {
+                showMessage("Please fill in all fields!", "error");
+                return;
+            }
+
+            console.log("Favorite Topics:", { topic1, topic2, topic3 });
+            showMessage("Setting up your profile...", "info");
+
+            setTimeout(() => {
+                handleLoginSuccess(username, userType);
+            }, 1500);
+        });
+
+        function showMessage(message, type = "info") {
+            messageText.textContent = message;
+            messageBox.className = 'message-box ' + type;
+
+            messageBox.classList.remove('hidden');
+
+            setTimeout(() => {
+                messageBox.classList.add('hidden');
+            }, 3000);
+        }
+
+        function handleResize() {
+            const blob3 = document.querySelector('.blob3');
+            if (window.innerWidth < 768) {
+                if (blob3) blob3.style.display = 'none';
+            } else {
+                if (blob3) blob3.style.display = 'block';
+            }
+        }
+
+        window.addEventListener('resize', handleResize);
+        handleResize();
+
+        function handleLoginSuccess(username, userType) {
+            console.log(`Login successful for user: ${username} of type ${userType}`);
+            //  Replace this with your actual post-login logic.
+            //  For example, you might:
+            //  1. Redirect the user to a different page:  window.location.href = "/dashboard.html";
+            //  2. Update the UI to show logged-in state.
+            //  3.  Store user data in local storage or a state management system.
+
+            showMessage(`Welcome to Kids Talk Pro, ${username}!`, "success"); // Keep this
+            //  Example of redirecting to a dashboard page after 2 seconds
+             setTimeout(() => {
+                 window.location.href = "/homepage.html"; // Changed to homepage
+             }, 2000);
+        }
+
+    </script>
+</body>
+</html>
