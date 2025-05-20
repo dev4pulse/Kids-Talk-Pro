@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Kids Talk Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Nunito', 'Poppins', sans-serif;
@@ -86,7 +86,7 @@
             -webkit-appearance: none; /* Remove default dropdown arrow for consistency */
             -moz-appearance: none;
             appearance: none;
-            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%20viewBox%3D%220%200%20292.4%20292.4%22%3E%3Cpath%20fill%3D%22%23000000%22%20d%3D%22M287%2C197.3L159.9%2C69.9c-1.8-1.8-4.7-1.8-6.5%2C0L5.4%2C197.3c-1.8%2C1.8-1.8%2C4.7%2C0%2C6.5l14.4%2C14.4c1.8%2C1.8%2C4.7%2C1.8%2C6.5%2C0l118.2-118.2l118.2%2C118.2c1.8%2C1.8%2C4.7%2C1.8%2C6.5%2C0l14.4-14.4C288.7%2C202%2C288.7%2C199.1%2C287%2C197.3z%22%2F%3E%3C%2Fsvg%3E'); /* Custom arrow */
+            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%20viewBox%3D%220%200%20292.4%20292.4%22%3E%3Cpath%20fill%3D%22%23333%22%20d%3D%22M287%2069.4c5.2-5.2%205.2-13.6%200-18.8s-13.6-5.2-18.8%200L146.2%20172.6%2024.2%2050.6c-5.2-5.2-13.6-5.2-18.8%200s-5.2%2013.6%200%2018.8l135%20135c5.2%205.2%2013.6%205.2%2018.8%200l135-135z%22%2F%3E%3C%2Fsvg%3E');
             background-repeat: no-repeat;
             background-position: right 0.7rem top 50%;
             background-size: 0.65rem auto;
@@ -118,41 +118,26 @@
             border-radius: 0.75rem;
             font-weight: 500;
             box-shadow: 0 4px 6px rgba(0,0,0,0.15);
-            animation: slideIn 0.3s ease-out, slideOut 0.3s 2.5s ease-in forwards;
-            opacity: 0;
             z-index: 100;
+            opacity: 1;
+            color: #333;
+            background-color: #f0f9ff;
+            display: none;
         }
         .message-box.error {
             background-color: #fecaca;
             color: #b91c1c;
+            display: block;
         }
         .message-box.success {
             background-color: #dcf8c6;
             color: #15803d;
+            display: block;
         }
         .message-box.info {
             background-color: #e0f7fa;
             color: #06b6d4;
-        }
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-        @keyframes slideOut {
-            from {
-                transform: translateX(0);
-                opacity: 1;
-            }
-            to {
-                transform: translateX(100%);
-                opacity: 0;
-            }
+            display: block;
         }
         #loginForm {
             display: none;
@@ -178,7 +163,7 @@
         }
     </style>
 </head>
-<body>
+<body class="bg-wave-pattern">
     <div class="blob-effect blob1"></div>
     <div class="blob-effect blob2"></div>
     <div class="blob-effect blob3 hidden md:block"></div>
@@ -225,7 +210,7 @@
                         class="w-full"
                         placeholder="Enter subject" required>
             </div>
-            <button type="button" id="expertNext" class="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+            <button type="button" id="expertNext" class="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400">
                 Next
             </button>
         </form>
@@ -237,31 +222,27 @@
                         class="w-full"
                         placeholder="your.name@example.com" required>
             </div>
-
             <div>
                 <label for="learnerPassword" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
                 <input type="password" name="learnerPassword" id="learnerPassword"
                         class="w-full"
                         placeholder="Your super secret password" required>
             </div>
-
             <div>
                 <label for="learnerAge" class="block text-sm font-medium text-gray-700 mb-1">Age</label>
                 <input type="number" name="learnerAge" id="learnerAge"
                         class="w-full"
                         placeholder="Enter your age" min="0" required>
             </div>
-
             <div>
                 <label for="learnerParentEmail" class="block text-sm font-medium text-gray-700 mb-1">Parent/Guardian Email</label>
                 <input type="email" name="learnerParentEmail" id="learnerParentEmail"
                         class="w-full"
                         placeholder="Enter parent/guardian email" required>
             </div>
-
             <div>
                 <button type="button" id="learnerNext"
-                        class="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        class="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400">
                     Next
                 </button>
             </div>
@@ -314,15 +295,15 @@
                        placeholder="Specify other topic">
             </div>
             <button type="button" id="topicsNext"
-                    class="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    class="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400">
                 Next
             </button>
         </form>
     </main>
-
+    <div id="messageBox" class="message-box">
+        <span id="messageText"></span>
+    </div>
     <script>
-        // Basic form submission handler
-        // Removed references to messageBox and messageText as they are not in the HTML
         const expertButton = document.getElementById('expertButton');
         const learnerButton = document.getElementById('learnerButton');
         const selectionButtonsDiv = document.getElementById('selectionButtons');
@@ -332,6 +313,10 @@
         const learnerNextButton = document.getElementById('learnerNext');
         const favoriteTopicsForm = document.getElementById('favoriteTopicsForm');
         const topicsNextButton = document.getElementById('topicsNext');
+
+        // Message box elements
+        const messageBox = document.getElementById('messageBox');
+        const messageText = document.getElementById('messageText');
 
         // Get references for the new topic select and other input fields
         const topic1Select = document.getElementById('topic1Select');
@@ -344,16 +329,13 @@
         let userType = "";
         let username = "";
 
-        // Function to display messages (now logs to console as messageBox/messageText are missing)
         function showMessage(message, type = "info") {
-            console.log(`Message (${type}): ${message}`); // Log to console for now
-            // In a real app, you would dynamically create and show a message box here.
-            // Example:
-            // const msgDiv = document.createElement('div');
-            // msgDiv.textContent = message;
-            // msgDiv.className = `message-box ${type}`;
-            // document.body.appendChild(msgDiv);
-            // setTimeout(() => msgDiv.remove(), 3000);
+            messageText.textContent = message;
+            messageBox.className = 'message-box ' + type;
+            messageBox.style.display = 'block';
+            setTimeout(() => {
+                messageBox.style.display = 'none';
+            }, 3000);
         }
 
         expertButton.addEventListener('click', function() {
@@ -361,9 +343,8 @@
             expertForm.style.display = 'block';
             learnerForm.style.display = 'none';
             favoriteTopicsForm.style.display = 'none';
-            // Adjust main element height
             const mainElement = document.querySelector('main');
-            mainElement.style.height = 'auto'; // This will allow the height to adjust up to max-height
+            mainElement.style.height = 'auto';
         });
 
         learnerButton.addEventListener('click', function() {
@@ -371,9 +352,8 @@
             learnerForm.style.display = 'block';
             expertForm.style.display = 'none';
             favoriteTopicsForm.style.display = 'none';
-            // Adjust main element height
             const mainElement = document.querySelector('main');
-            mainElement.style.height = 'auto'; // This will allow the height to adjust up to max-height
+            mainElement.style.height = 'auto';
         });
 
         expertNextButton.addEventListener('click', function(event) {
@@ -389,11 +369,9 @@
                 return;
             }
 
-            console.log('Attempting login with:', { username, password, workplace, subject });
             showMessage("Logging in as Expert...", "info");
             userType = "expert";
 
-            // Redirect experts to homepage.html (the "Recent Kids" page)
             setTimeout(() => {
                 handleLoginSuccess(username, userType);
             }, 1500);
@@ -404,17 +382,14 @@
 
             username = document.getElementById('learnerUsername').value;
             const password = document.getElementById('learnerPassword').value;
-            // Get new learner fields
             const age = document.getElementById('learnerAge').value;
             const parentEmail = document.getElementById('learnerParentEmail').value;
-
 
             if (!username || !password || !age || !parentEmail) {
                 showMessage("Please fill in all fields!", "error");
                 return;
             }
 
-            console.log('Attempting login with:', { username, password, age, parentEmail});
             showMessage("Logging in as Learner...", "info");
             userType = "learner";
 
@@ -424,7 +399,6 @@
             }, 1500);
         });
 
-        // Function to handle topic selection change
         function handleTopicChange(selectElement, otherInputElement) {
             if (selectElement.value === 'Other') {
                 otherInputElement.style.display = 'block';
@@ -432,25 +406,21 @@
             } else {
                 otherInputElement.style.display = 'none';
                 otherInputElement.removeAttribute('required');
-                otherInputElement.value = ''; // Clear the input when not "Other"
+                otherInputElement.value = '';
             }
         }
 
-        // Add event listeners for topic select changes
         topic1Select.addEventListener('change', () => handleTopicChange(topic1Select, topic1Other));
         topic2Select.addEventListener('change', () => handleTopicChange(topic2Select, topic2Other));
         topic3Select.addEventListener('change', () => handleTopicChange(topic3Select, topic3Other));
 
-
         topicsNextButton.addEventListener('click', function(event) {
             event.preventDefault();
 
-            // Get values from either select or "Other" input
             const topic1 = topic1Select.value === 'Other' ? topic1Other.value : topic1Select.value;
             const topic2 = topic2Select.value === 'Other' ? topic2Other.value : topic2Select.value;
             const topic3 = topic3Select.value === 'Other' ? topic3Other.value : topic3Select.value;
 
-            // Validate that topics are selected/entered
             if (!topic1 || !topic2 || !topic3 ||
                 (topic1Select.value === 'Other' && topic1Other.value.trim() === '') ||
                 (topic2Select.value === 'Other' && topic2Other.value.trim() === '') ||
@@ -460,7 +430,6 @@
                 return;
             }
 
-            console.log("Favorite Topics:", { topic1, topic2, topic3 });
             showMessage("Setting up your profile...", "info");
 
             setTimeout(() => {
@@ -481,32 +450,21 @@
         handleResize();
 
         function handleLoginSuccess(username, userType) {
-            console.log(`Login successful for user: ${username} of type ${userType}`);
             showMessage(`Welcome to Kids Talk Pro, ${username}!`, "success");
             setTimeout(() => {
-                // Determine the target URL based on user type
                 let targetUrl = "";
                 if (userType === "expert") {
-                    targetUrl = "homepage.html"; // Experts go to the 'kids' page
+                    targetUrl = "homepage.html";
                 } else {
-                    targetUrl = "experts-talk-pro-homepage.html"; // Learners go to the 'experts' page
+                    targetUrl = "experts-talk-pro-homepage.html";
                 }
-
-                // Attempt navigation. In sandboxed environments like Canvas, direct navigation
-                // between different HTML files (even if they are conceptually "next to each other"
-                // in the Canvas's internal storage) can be problematic due to blob: URLs.
-                // The error "Failed to set the 'href' property on 'Location': 'homepage.html' is not a valid URL"
-                // indicates this limitation.
-                // For a live web server, this would work as expected.
                 try {
                     window.location.href = targetUrl;
                 } catch (e) {
-                    console.error("Navigation failed:", e);
                     showMessage("Navigation failed. This feature might not be fully supported in this preview environment. Please try downloading the code and running it on a local web server.", "error");
                 }
             }, 2000);
         }
-
     </script>
 </body>
 </html>
