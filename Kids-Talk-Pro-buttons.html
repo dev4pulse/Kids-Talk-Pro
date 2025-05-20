@@ -7,15 +7,12 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        body, html {
-            height: 100%;
-            overflow: auto;
-        }
         body {
             font-family: 'Nunito', 'Poppins', sans-serif;
         }
+        /* Updated to a more distinct pastel gradient from blue to pink */
         .bg-wave-pattern {
-            background-image: linear-gradient(to bottom, #f0f9ff, #e0f2fe);
+            background-image: linear-gradient(to right, #e0f2fe, #fce7f3); /* Light blue to light pink */
         }
         .blob-effect {
             position: absolute;
@@ -79,15 +76,22 @@
         .button-learner:hover {
             background-image: linear-gradient(to bottom right, #2563eb, #16a34a);
         }
-        input[type="text"], input[type="password"] {
+        input[type="text"], input[type="password"], input[type="number"], input[type="email"], select {
             padding: 0.8rem 1rem;
             border-radius: 0.75rem;
             border: 2px solid #e0f2fe;
             background-color: white;
             box-shadow: inset 0 1px 3px rgba(0,0,0,0.06);
             transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            -webkit-appearance: none; /* Remove default dropdown arrow for consistency */
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%20viewBox%3D%220%200%20292.4%20292.4%22%3E%3Cpath%20fill%3D%22%23000000%22%20d%3D%22M287%2C197.3L159.9%2C69.9c-1.8-1.8-4.7-1.8-6.5%2C0L5.4%2C197.3c-1.8%2C1.8-1.8%2C4.7%2C0%2C6.5l14.4%2C14.4c1.8%2C1.8%2C4.7%2C1.8%2C6.5%2C0l118.2-118.2l118.2%2C118.2c1.8%2C1.8%2C4.7%2C1.8%2C6.5%2C0l14.4-14.4C288.7%2C202%2C288.7%2C199.1%2C287%2C197.3z%22%2F%3E%3C%2Fsvg%3E'); /* Custom arrow */
+            background-repeat: no-repeat;
+            background-position: right 0.7rem top 50%;
+            background-size: 0.65rem auto;
         }
-        input[type="text"]:focus, input[type="password"]:focus {
+        input[type="text"]:focus, input[type="password"]:focus, input[type="number"]:focus, input[type="email"]:focus, select:focus {
             outline: none;
             border-color: #38bdf8;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
@@ -167,14 +171,19 @@
         #favoriteTopicsForm {
             display: none;
         }
+        /* Style for the "Other" input fields */
+        .other-topic-input {
+            margin-top: 5px;
+            display: none; /* Hidden by default */
+        }
     </style>
 </head>
-<body class="bg-wave-pattern min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+<body>
     <div class="blob-effect blob1"></div>
     <div class="blob-effect blob2"></div>
     <div class="blob-effect blob3 hidden md:block"></div>
 
-    <main class="bg-white/90 backdrop-blur-md p-6 sm:p-8 md:p-10 rounded-2xl shadow-2xl w-full max-w-md z-10">
+    <main class="bg-white/90 backdrop-blur-md p-6 sm:p-8 md:p-10 rounded-2xl shadow-2xl w-full max-w-md z-10 max-h-[calc(100vh-80px)] overflow-y-auto">
         <header class="text-center mb-6">
             <div class="inline-block p-4 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mb-4 shadow-md">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-12 w-12">
@@ -184,7 +193,6 @@
             <h1 class="text-3xl sm:text-4xl font-bold text-gray-800">
                 Kids <span class="text-blue-500">Talk</span> <span class="text-green-500">Pro</span>
             </h1>
-            
         </header>
 
         <div id="selectionButtons" class="text-center mb-6">
@@ -238,6 +246,20 @@
             </div>
 
             <div>
+                <label for="learnerAge" class="block text-sm font-medium text-gray-700 mb-1">Age</label>
+                <input type="number" name="learnerAge" id="learnerAge"
+                        class="w-full"
+                        placeholder="Enter your age" min="0" required>
+            </div>
+
+            <div>
+                <label for="learnerParentEmail" class="block text-sm font-medium text-gray-700 mb-1">Parent/Guardian Email</label>
+                <input type="email" name="learnerParentEmail" id="learnerParentEmail"
+                        class="w-full"
+                        placeholder="Enter parent/guardian email" required>
+            </div>
+
+            <div>
                 <button type="button" id="learnerNext"
                         class="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                     Next
@@ -247,36 +269,60 @@
 
         <form id="favoriteTopicsForm" class="space-y-4" style="display: none;">
             <div>
-                <label for="topic1" class="block text-sm font-medium text-gray-700 mb-1">Favorite Topic 1</label>
-                <input type="text" name="topic1" id="topic1"
-                        class="w-full"
-                        placeholder="Enter your favorite topic" required>
+                <label for="topic1Select" class="block text-sm font-medium text-gray-700 mb-1">Favorite Topic 1</label>
+                <select name="topic1Select" id="topic1Select" class="w-full form-control" required>
+                    <option value="">Select a topic</option>
+                    <option value="Math">Math</option>
+                    <option value="ELA">ELA</option>
+                    <option value="Writing">Writing</option>
+                    <option value="Science">Science</option>
+                    <option value="History">History</option>
+                    <option value="Other">Other</option>
+                </select>
+                <input type="text" name="topic1Other" id="topic1Other"
+                       class="w-full other-topic-input form-control"
+                       placeholder="Specify other topic">
             </div>
             <div>
-                <label for="topic2" class="block text-sm font-medium text-gray-700 mb-1">Favorite Topic 2</label>
-                <input type="text" name="topic2" id="topic2"
-                        class="w-full"
-                        placeholder="Enter another topic" required>
+                <label for="topic2Select" class="block text-sm font-medium text-gray-700 mb-1">Favorite Topic 2</label>
+                <select name="topic2Select" id="topic2Select" class="w-full form-control" required>
+                    <option value="">Select a topic</option>
+                    <option value="Math">Math</option>
+                    <option value="ELA">ELA</option>
+                    <option value="Writing">Writing</option>
+                    <option value="Science">Science</option>
+                    <option value="History">History</option>
+                    <option value="Other">Other</option>
+                </select>
+                <input type="text" name="topic2Other" id="topic2Other"
+                       class="w-full other-topic-input form-control"
+                       placeholder="Specify other topic">
             </div>
             <div>
-                <label for="topic3" class="block text-sm font-medium text-gray-700 mb-1">Favorite Topic 3</label>
-                <input type="text" name="topic3" id="topic3"
-                        class="w-full"
-                        placeholder="Enter one more topic" required>
+                <label for="topic3Select" class="block text-sm font-medium text-gray-700 mb-1">Favorite Topic 3</label>
+                <select name="topic3Select" id="topic3Select" class="w-full form-control" required>
+                    <option value="">Select a topic</option>
+                    <option value="Math">Math</option>
+                    <option value="ELA">ELA</option>
+                    <option value="Writing">Writing</option>
+                    <option value="Science">Science</option>
+                    <option value="History">History</option>
+                    <option value="Other">Other</option>
+                </select>
+                <input type="text" name="topic3Other" id="topic3Other"
+                       class="w-full other-topic-input form-control"
+                       placeholder="Specify other topic">
             </div>
             <button type="button" id="topicsNext"
                     class="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                 Next
             </button>
         </form>
-
-        
     </main>
 
     <script>
         // Basic form submission handler
-        const messageBox = document.getElementById('messageBox');
-        const messageText = document.getElementById('messageText');
+        // Removed references to messageBox and messageText as they are not in the HTML
         const expertButton = document.getElementById('expertButton');
         const learnerButton = document.getElementById('learnerButton');
         const selectionButtonsDiv = document.getElementById('selectionButtons');
@@ -287,8 +333,28 @@
         const favoriteTopicsForm = document.getElementById('favoriteTopicsForm');
         const topicsNextButton = document.getElementById('topicsNext');
 
+        // Get references for the new topic select and other input fields
+        const topic1Select = document.getElementById('topic1Select');
+        const topic1Other = document.getElementById('topic1Other');
+        const topic2Select = document.getElementById('topic2Select');
+        const topic2Other = document.getElementById('topic2Other');
+        const topic3Select = document.getElementById('topic3Select');
+        const topic3Other = document.getElementById('topic3Other');
+
         let userType = "";
         let username = "";
+
+        // Function to display messages (now logs to console as messageBox/messageText are missing)
+        function showMessage(message, type = "info") {
+            console.log(`Message (${type}): ${message}`); // Log to console for now
+            // In a real app, you would dynamically create and show a message box here.
+            // Example:
+            // const msgDiv = document.createElement('div');
+            // msgDiv.textContent = message;
+            // msgDiv.className = `message-box ${type}`;
+            // document.body.appendChild(msgDiv);
+            // setTimeout(() => msgDiv.remove(), 3000);
+        }
 
         expertButton.addEventListener('click', function() {
             selectionButtonsDiv.style.display = 'none';
@@ -297,7 +363,7 @@
             favoriteTopicsForm.style.display = 'none';
             // Adjust main element height
             const mainElement = document.querySelector('main');
-            mainElement.style.height = 'auto';
+            mainElement.style.height = 'auto'; // This will allow the height to adjust up to max-height
         });
 
         learnerButton.addEventListener('click', function() {
@@ -307,9 +373,8 @@
             favoriteTopicsForm.style.display = 'none';
             // Adjust main element height
             const mainElement = document.querySelector('main');
-            mainElement.style.height = 'auto';
+            mainElement.style.height = 'auto'; // This will allow the height to adjust up to max-height
         });
-
 
         expertNextButton.addEventListener('click', function(event) {
             event.preventDefault();
@@ -318,7 +383,6 @@
             const password = document.getElementById('expertPassword').value;
             const workplace = document.getElementById('workplace').value;
             const subject = document.getElementById('subject').value;
-
 
             if (!username || !password || !workplace || !subject) {
                 showMessage("Please fill in all fields!", "error");
@@ -329,10 +393,9 @@
             showMessage("Logging in as Expert...", "info");
             userType = "expert";
 
+            // Redirect experts to homepage.html (the "Recent Kids" page)
             setTimeout(() => {
-                expertForm.style.display = 'none';
-                favoriteTopicsForm.style.display = 'block';
-                //handleLoginSuccess(username, "expert");
+                handleLoginSuccess(username, userType);
             }, 1500);
         });
 
@@ -341,33 +404,59 @@
 
             username = document.getElementById('learnerUsername').value;
             const password = document.getElementById('learnerPassword').value;
+            // Get new learner fields
+            const age = document.getElementById('learnerAge').value;
+            const parentEmail = document.getElementById('learnerParentEmail').value;
 
 
-            if (!username || !password) {
+            if (!username || !password || !age || !parentEmail) {
                 showMessage("Please fill in all fields!", "error");
                 return;
             }
 
-            console.log('Attempting login with:', { username, password});
+            console.log('Attempting login with:', { username, password, age, parentEmail});
             showMessage("Logging in as Learner...", "info");
             userType = "learner";
 
             setTimeout(() => {
                 learnerForm.style.display = 'none';
                 favoriteTopicsForm.style.display = 'block';
-                //handleLoginSuccess(username, "learner");
             }, 1500);
         });
+
+        // Function to handle topic selection change
+        function handleTopicChange(selectElement, otherInputElement) {
+            if (selectElement.value === 'Other') {
+                otherInputElement.style.display = 'block';
+                otherInputElement.setAttribute('required', 'true');
+            } else {
+                otherInputElement.style.display = 'none';
+                otherInputElement.removeAttribute('required');
+                otherInputElement.value = ''; // Clear the input when not "Other"
+            }
+        }
+
+        // Add event listeners for topic select changes
+        topic1Select.addEventListener('change', () => handleTopicChange(topic1Select, topic1Other));
+        topic2Select.addEventListener('change', () => handleTopicChange(topic2Select, topic2Other));
+        topic3Select.addEventListener('change', () => handleTopicChange(topic3Select, topic3Other));
+
 
         topicsNextButton.addEventListener('click', function(event) {
             event.preventDefault();
 
-            const topic1 = document.getElementById('topic1').value;
-            const topic2 = document.getElementById('topic2').value;
-            const topic3 = document.getElementById('topic3').value;
+            // Get values from either select or "Other" input
+            const topic1 = topic1Select.value === 'Other' ? topic1Other.value : topic1Select.value;
+            const topic2 = topic2Select.value === 'Other' ? topic2Other.value : topic2Select.value;
+            const topic3 = topic3Select.value === 'Other' ? topic3Other.value : topic3Select.value;
 
-            if (!topic1 || !topic2 || !topic3) {
-                showMessage("Please fill in all fields!", "error");
+            // Validate that topics are selected/entered
+            if (!topic1 || !topic2 || !topic3 ||
+                (topic1Select.value === 'Other' && topic1Other.value.trim() === '') ||
+                (topic2Select.value === 'Other' && topic2Other.value.trim() === '') ||
+                (topic3Select.value === 'Other' && topic3Other.value.trim() === '')
+            ) {
+                showMessage("Please select all topics or fill in 'Other' fields!", "error");
                 return;
             }
 
@@ -378,17 +467,6 @@
                 handleLoginSuccess(username, userType);
             }, 1500);
         });
-
-        function showMessage(message, type = "info") {
-            messageText.textContent = message;
-            messageBox.className = 'message-box ' + type;
-
-            messageBox.classList.remove('hidden');
-
-            setTimeout(() => {
-                messageBox.classList.add('hidden');
-            }, 3000);
-        }
 
         function handleResize() {
             const blob3 = document.querySelector('.blob3');
@@ -404,16 +482,28 @@
 
         function handleLoginSuccess(username, userType) {
             console.log(`Login successful for user: ${username} of type ${userType}`);
-            //  Replace this with your actual post-login logic.
-            //  For example, you might:
-            //  1. Redirect the user to a different page:  window.location.href = "/dashboard.html";
-            //  2. Update the UI to show logged-in state.
-            //  3.  Store user data in local storage or a state management system.
-
-            showMessage(`Welcome to Kids Talk Pro, ${username}!`, "success"); // Keep this
-            //  Example of redirecting to a dashboard page after 2 seconds
+            showMessage(`Welcome to Kids Talk Pro, ${username}!`, "success");
             setTimeout(() => {
-                window.location.href = "/homepage.html"; // Changed to homepage
+                // Determine the target URL based on user type
+                let targetUrl = "";
+                if (userType === "expert") {
+                    targetUrl = "homepage.html"; // Experts go to the 'kids' page
+                } else {
+                    targetUrl = "experts-talk-pro-homepage.html"; // Learners go to the 'experts' page
+                }
+
+                // Attempt navigation. In sandboxed environments like Canvas, direct navigation
+                // between different HTML files (even if they are conceptually "next to each other"
+                // in the Canvas's internal storage) can be problematic due to blob: URLs.
+                // The error "Failed to set the 'href' property on 'Location': 'homepage.html' is not a valid URL"
+                // indicates this limitation.
+                // For a live web server, this would work as expected.
+                try {
+                    window.location.href = targetUrl;
+                } catch (e) {
+                    console.error("Navigation failed:", e);
+                    showMessage("Navigation failed. This feature might not be fully supported in this preview environment. Please try downloading the code and running it on a local web server.", "error");
+                }
             }, 2000);
         }
 
