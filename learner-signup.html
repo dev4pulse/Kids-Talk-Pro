@@ -20,13 +20,17 @@
     </div>
 
     <h2 class="text-xl font-semibold mb-4">Learner Sign-Up</h2>
-    <form action="learner.html" method="get" class="space-y-4 text-left">
+    <form action="/api/learners" method="post" class="space-y-4 text-left">
       <div>
         <label class="block text-sm font-medium">Full Name</label>
         <input name="name" type="text" required class="mt-1 w-full border rounded px-3 py-2" />
       </div>
       <div>
-        <label class="block text-sm font-medium">Email</label>
+        <label class="block text-sm font-medium">Kid Email</label>
+        <input name="email" type="email" required class="mt-1 w-full border rounded px-3 py-2" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium">Parent Email</label>
         <input name="email" type="email" required class="mt-1 w-full border rounded px-3 py-2" />
       </div>
       <div>
