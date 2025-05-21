@@ -1,303 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Homepage - Kids Talk Pro</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Nunito', sans-serif;
-            background-color: #e8f0fa;
-        }
-        .container {
-            background-color: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 16px;
-            max-width: 800px;
-            width: 95%;
-            margin-top: 20px;
-            margin-bottom: 20px;
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .header h1 {
-            color: #25d366;
-            font-size: 1.8rem;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-        .header p {
-            color: #555;
-            font-size: 0.9rem;
-        }
-        .subject-group {
-            margin-bottom: 20px;
-            border-radius: 12px;
-            padding: 16px;
-            background-color: #f0f0f0;
-            cursor: pointer;
-            transition: background-color 0.2s ease;
-        }
-        .subject-group:hover {
-            background-color: #d0d0d0;
-        }
-        .subject-group.selected {
-            background-color: #b0f0b0;
-        }
-        .subject-group h2 {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 10px;
-            text-align: center;
-        }
-        .message-list {
-            display: flex;
-            flex-direction: column;
-            padding: 0;
-            margin: 0;
-        }
-        .message-item {
-            display: flex;
-            align-items: center;
-            padding: 12px;
-            border-bottom: 1px solid #f0f0f0;
-            transition: background-color 0.2s ease;
-            cursor: pointer;
-        }
-        .message-item:last-child {
-            border-bottom: none;
-        }
-        .message-item:hover {
-            background-color: #e0e0e0;
-        }
-        .avatar {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            margin-right: 16px;
-            background-color: #ddd;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #fff;
-            font-size: 1.2rem;
-        }
-        .avatar img{
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-        }
-        .message-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            min-width: 0;
-        }
-        .sender-name {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 4px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-        .message-text {
-            font-size: 0.9rem;
-            color: #666;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-        .message-time {
-            font-size: 0.8rem;
-            color: #888;
-            margin-left: auto;
-            display: flex;
-            align-items: flex-start;
-        }
-        .button-container {
-            text-align: center;
-            margin-top: 20px;
-        }
-        .back-button {
-            background-color: #075e54;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 24px;
-            font-size: 1rem;
-            font-weight: 600;
-            text-decoration: none;
-            transition: background-color 0.3s ease;
-            display: inline-block;
-            margin-top: 10px;
-        }
-        .back-button:hover {
-            background-color: #054d43;
-        }
-        .footer {
-            text-align: center;
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #e0e0e0;
-            color: #777;
-            font-size: 0.9rem;
-        }
-        /* New styles for the input area */
-        .input-container {
-            display: flex;
-            align-items: center;
-            margin-top: 20px;
-            display: none;
-        }
-        .text-input {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 24px;
-            margin-right: 10px;
-            font-size: 1rem;
-        }
-        .send-button {
-            background-color: #25d366;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 24px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        .send-button:hover {
-            background-color: #128c7e;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Kids Talk Pro – Recent Experts</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap"
+    rel="stylesheet"
+  />
 </head>
-<body class="bg-gradient-to-r from-blue-100 to-green-100">
-    <div class="container">
-        <header class="header">
-            <h1>Recent Topics</h1>
-            <p>Explore recent activities in different subjects.</p>
-        </header>
-        <main>
-            <div class="subject-group" data-subject="math">
-                <h2>Math</h2>
-                <div class="message-list math-messages">
-                </div>
-            </div>
-            <div class="subject-group" data-subject="ela">
-                <h2>ELA</h2>
-                <div class="message-list ela-messages">
-                </div>
-            </div>
-            <div class="input-container" id="messageInputContainer">
-                <input type="text" id="messageInput" class="text-input" placeholder="Type your message...">
-                <button id="sendMessageButton" class="send-button">Send</button>
-            </div>
-        </main>
-        <div class="button-container">
-            <a href="login.html" class="back-button">Go back to Login</a>
-        </div>
-        <footer class="footer">
-            <p>&copy; <?php echo date("Y"); ?> Kids Talk Pro. All rights reserved.</p>
-        </footer>
+<body class="bg-gradient-to-r from-blue-100 to-green-100 font-sans min-h-screen flex items-start p-4">
+  <div class="bg-white rounded-2xl shadow-lg w-full max-w-xl mx-auto mt-6 p-6">
+    <!-- Header -->
+    <header class="text-center mb-6">
+      <h1 class="text-2xl font-bold text-green-600">Recent Experts</h1>
+      <p class="text-gray-600 text-sm">Tap a subject to see the latest post</p>
+    </header>
+
+    <!-- Subject cards -->
+    <div class="space-y-4">
+      <div data-subject="math" class="subject p-4 bg-gray-100 rounded-lg hover:bg-gray-200 cursor-pointer">
+        <h2 class="font-semibold text-lg mb-2 text-center">Math</h2>
+        <div class="message-list"></div>
+      </div>
+      <div data-subject="ela" class="subject p-4 bg-gray-100 rounded-lg hover:bg-gray-200 cursor-pointer">
+        <h2 class="font-semibold text-lg mb-2 text-center">ELA</h2>
+        <div class="message-list"></div>
+      </div>
     </div>
-    <script>
-        const mathMessagesData = [
-            { sender: "Kid 1", message: "Solved a tricky equation!", time: "10:30 AM", avatar: "K1" },
-            { sender: "Kid 2", message: "Learned about fractions.", time: "Yesterday", avatar: "K2" },
-        ];
-        const elaMessagesData = [
-            { sender: "Kid 3", message: "Wrote a poem today!", time: "2 days ago", avatar: "K3" },
-            { sender: "Kid 4", message: "Read a new book.", time: "5 days ago", avatar: "K4" },
-        ];
-        function createMessageItem(item) {
-            const messageItem = document.createElement("div");
-            messageItem.className = "message-item";
-            const avatarDiv = document.createElement("div");
-            avatarDiv.className = "avatar";
-             if(item.avatar.startsWith("http")){
-                avatarDiv.innerHTML = `<img src="${item.avatar}" alt="${item.sender}"/>`
-             }
-             else{
-                avatarDiv.textContent = item.avatar;
-             }
-            const messageContentDiv = document.createElement("div");
-            messageContentDiv.className = "message-content";
-            const senderNameP = document.createElement("p");
-            senderNameP.className = "sender-name";
-            senderNameP.textContent = item.sender;
-            const messageTextP = document.createElement("p");
-            messageTextP.className = "message-text";
-            messageTextP.textContent = item.message;
-            messageContentDiv.appendChild(senderNameP);
-            messageContentDiv.appendChild(messageTextP);
-            const messageTimeP = document.createElement("p");
-            messageTimeP.className = "message-time";
-            messageTimeP.textContent = item.time;
-            messageItem.appendChild(avatarDiv);
-            messageItem.appendChild(messageContentDiv);
-            messageItem.appendChild(messageTimeP);
-            return messageItem;
-        }
-        const mathMessagesContainer = document.querySelector(".math-messages");
-        const elaMessagesContainer = document.querySelector(".ela-messages");
-        function displayMostRecentMessage(subject, messagesContainer, messages) {
-            messagesContainer.innerHTML = '';
-            if (messages && messages.length > 0) {
-                const mostRecentMessage = messages[0];
-                const messageItem = createMessageItem(mostRecentMessage);
-                messagesContainer.appendChild(messageItem);
-            }
-        }
-        displayMostRecentMessage("math", mathMessagesContainer, mathMessagesData);
-        displayMostRecentMessage("ela", elaMessagesContainer, elaMessagesData);
-        // Get the input element and the send button
-        const messageInput = document.getElementById("messageInput");
-        const sendMessageButton = document.getElementById("sendMessageButton");
-        const messageInputContainer = document.getElementById("messageInputContainer");
-        let selectedSubject = null;
-        // Add an event listener to the send button
-        sendMessageButton.addEventListener("click", () => {
-            // Get the text from the input
-            const messageText = messageInput.value;
-            // Check if the message is not empty
-            if (messageText.trim() !== "" && selectedSubject) {
-                // Create a new message item
-                const newMessage = {
-                    sender: "You",
-                    message: messageText,
-                    time: "Just now",
-                    avatar: "You",
-                };
-                if (selectedSubject === "math") {
-                    mathMessagesData.unshift(newMessage);
-                     displayMostRecentMessage("math", mathMessagesContainer, mathMessagesData);
-                } else if (selectedSubject === "ela") {
-                    elaMessagesData.unshift(newMessage);
-                    displayMostRecentMessage("ela", elaMessagesContainer, elaMessagesData);
-                }
-                // Clear the input
-                messageInput.value = "";
-            }
-        });
-        // Add click event listeners to the subject groups
-        document.querySelectorAll('.subject-group').forEach(group => {
-            group.addEventListener('click', () => {
-                const subject = group.dataset.subject;
-                selectedSubject = subject;
-                messageInputContainer.style.display = 'flex';
-                // Remove selected class from all groups
-                document.querySelectorAll('.subject-group').forEach(g => g.classList.remove('selected'));
-                // Add selected class to the clicked group
-                group.classList.add('selected');
-            });
-        });
-    </script>
+
+    <!-- Message input (hidden until a subject is tapped) -->
+    <div id="inputArea" class="mt-6 hidden flex space-x-2">
+      <input
+        id="msgIn"
+        type="text"
+        placeholder="Type your message…"
+        class="flex-1 border rounded-full px-4 py-2 focus:outline-none"
+      />
+      <button id="sendBtn" class="bg-green-500 hover:bg-green-600 text-white rounded-full px-4 py-2">
+        Send
+      </button>
+    </div>
+
+    <!-- Back to login -->
+    <div class="text-center mt-6">
+      <a href="login.html" class="text-blue-500 hover:underline">← Back to Login</a>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center text-gray-500 text-xs mt-6">
+      &copy; <span id="year"></span> Kids Talk Pro
+    </footer>
+  </div>
+
+  <script>
+    // Sample expert posts
+    const data = {
+      math: [{ sender: "Dr. Ishan", msg: "Just solved a calculus problem!", time: "10:30 AM" }],
+      ela: [{ sender: "Prof. Hari", msg: "Reviewed a poem today!", time: "Yesterday" }]
+    };
+
+    // Setup year
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    let selected = null;
+    const inputArea = document.getElementById("inputArea");
+    const msgIn = document.getElementById("msgIn");
+    const sendBtn = document.getElementById("sendBtn");
+
+    // Render the most recent post into a subject's .message-list
+    function render(subject) {
+      const list = document.querySelector(`[data-subject="${subject}"] .message-list`);
+      list.innerHTML = "";
+      const { sender, msg, time } = data[subject][0];
+      list.innerHTML = `
+        <div class="flex items-center space-x-3">
+          <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-white font-bold">${sender.charAt(0)}</div>
+          <div class="flex-1 min-w-0">
+            <p class="font-medium text-gray-800 truncate">${sender}</p>
+            <p class="text-gray-600 text-sm truncate">${msg}</p>
+          </div>
+          <p class="text-gray-500 text-xs">${time}</p>
+        </div>`;
+    }
+
+    // Initialize lists
+    ["math","ela"].forEach(subj => render(subj));
+
+    // Subject click handler
+    document.querySelectorAll(".subject").forEach(div => {
+      div.addEventListener("click", ()=>{
+        selected = div.dataset.subject;
+        inputArea.classList.remove("hidden");
+        document.querySelectorAll(".subject").forEach(d=>d.classList.remove("bg-green-50"));
+        div.classList.add("bg-green-50");
+      });
+    });
+
+    // Send new post
+    sendBtn.addEventListener("click", ()=>{
+      const txt = msgIn.value.trim();
+      if(!txt||!selected) return;
+      data[selected].unshift({
+        sender: "You",
+        msg: txt,
+        time: new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})
+      });
+      render(selected);
+      msgIn.value="";
+    });
+  </script>
 </body>
 </html>
