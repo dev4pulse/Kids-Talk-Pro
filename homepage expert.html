@@ -1,0 +1,471 @@
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kids Talk Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Base body styles */
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #e8f0fa; /* Light blue background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh; /* Ensure body takes full viewport height */
+            margin: 0;
+        }
+        /* Main container for the application */
+        .container {
+            background-color: #ffffff; /* White background for the card */
+            border-radius: 12px; /* Rounded corners */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            padding: 20px;
+            max-width: 600px; /* Max width for larger screens */
+            width: 95%; /* Responsive width */
+            margin: 20px auto; /* Center the container with vertical margin */
+            display: flex;
+            flex-direction: column;
+        }
+        /* Header styling */
+        .header h1 {
+            color: #25d366; /* WhatsApp green for the title */
+            font-size: 2.5rem; /* Large font size */
+            font-weight: 700; /* Bold font weight */
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        /* Styling for the list of kids */
+        .kid-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px; /* Space between kid items */
+            margin-top: 20px;
+        }
+        /* Individual kid item styling */
+        .kid-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            background-color: #f0f0f0; /* Light gray background */
+            border-radius: 8px; /* Rounded corners */
+            cursor: pointer; /* Indicate clickable */
+            transition: background-color 0.2s ease; /* Smooth hover effect */
+        }
+        .kid-item:hover {
+            background-color: #e0e0e0; /* Darker gray on hover */
+        }
+        .kid-item.selected {
+            background-color: #c8e6c9; /* Lighter green when selected */
+            border: 2px solid #25d366; /* Green border when selected */
+        }
+        /* Kid avatar styling */
+        .kid-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%; /* Circular avatar */
+            background-color: #aed581; /* Light green avatar background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-right: 15px;
+            flex-shrink: 0; /* Prevent avatar from shrinking */
+        }
+        /* Kid name styling */
+        .kid-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333; /* Dark gray text */
+        }
+        /* Info message styling */
+        .info-message {
+            text-align: center;
+            margin-top: 15px;
+            color: #666;
+            font-style: italic;
+            font-size: 0.9rem;
+        }
+
+        /* Chat View specific styles */
+        .chat-view {
+            display: flex;
+            flex-direction: column;
+            height: 500px; /* Fixed height for the chat area */
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            overflow: hidden; /* Ensures content stays within rounded corners */
+            margin-top: 20px; /* Space from the header */
+        }
+        /* Chat header (back button and kid name) */
+        .chat-header {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            background-color: #25d366; /* WhatsApp green */
+            color: white;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+        }
+        /* Back button inside chat header */
+        .chat-header .back-button {
+            background-color: #ef4444; /* Bright red for high contrast */
+            border: 2px solid #dc2626; /* Darker red border */
+            color: white;
+            font-size: 1.2rem; /* Increased font size */
+            font-weight: 700; /* Bolder font */
+            cursor: pointer;
+            margin-right: 15px;
+            padding: 8px 15px; /* Increased padding */
+            border-radius: 8px; /* Added some border-radius */
+            transition: background-color 0.2s ease, opacity 0.2s ease;
+        }
+        .chat-header .back-button:hover {
+            background-color: #dc2626; /* Darker red on hover */
+            opacity: 0.9;
+        }
+        /* Selected kid's name in chat header */
+        .chat-kid-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 0;
+        }
+        /* Area where chat messages are displayed */
+        .message-display-area {
+            flex: 1; /* Takes up all available vertical space */
+            padding: 15px;
+            overflow-y: auto; /* Enables scrolling for messages */
+            background-color: #fcfcfc; /* Very light background for chat bubbles */
+            display: flex;
+            flex-direction: column; /* Messages stack vertically */
+            gap: 10px; /* Space between message bubbles */
+        }
+        /* Individual chat message bubble */
+        .chat-message {
+            max-width: 70%; /* Messages don't take full width */
+            padding: 8px 12px;
+            border-radius: 15px; /* Rounded message bubbles */
+            word-wrap: break-word; /* Prevents long words from overflowing */
+            box-shadow: 0 1px 1px rgba(0,0,0,0.05); /* Subtle shadow for bubbles */
+        }
+        /* Styling for messages from the kid */
+        .chat-message.from-kid {
+            background-color: #e2f7cb; /* Light green for kid's messages */
+            align-self: flex-start; /* Align to the left */
+        }
+        /* Styling for messages from the user (you) */
+        .chat-message.from-you {
+            background-color: #dcf8c6; /* Slightly darker green for your messages */
+            align-self: flex-end; /* Align to the right */
+        }
+        /* Sender name within the message bubble */
+        .chat-message-sender {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 2px;
+        }
+        /* Message text within the message bubble */
+        .chat-message-text {
+            font-size: 0.95rem;
+            color: #333;
+        }
+        /* Time within the message bubble */
+        .chat-message-time {
+            font-size: 0.7rem;
+            color: #888;
+            text-align: right;
+            margin-top: 5px;
+        }
+        /* Message input container (at the bottom of chat view) */
+        .message-input-container {
+            display: flex; /* Use flex for input and button alignment */
+            align-items: center;
+            padding: 10px;
+            border-top: 1px solid #e0e0e0; /* Separator line */
+            background-color: #f8f8f8; /* Light background */
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+        }
+        /* Message input field */
+        .message-input {
+            flex: 1; /* Takes up most of the space */
+            padding: 10px 15px;
+            border: 1px solid #ccc;
+            border-radius: 20px; /* Rounded input field */
+            font-size: 1rem;
+            outline: none; /* Remove default focus outline */
+            transition: border-color 0.2s ease;
+        }
+        .message-input:focus {
+            border-color: #25d366; /* Green border on focus */
+        }
+        /* Send button */
+        .send-button {
+            background-color: #25d366; /* WhatsApp green */
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-left: 10px;
+            border: none;
+        }
+        .send-button:hover {
+            background-color: #128c7e; /* Darker green on hover */
+        }
+
+        /* Utility class to hide elements */
+        .hidden {
+            display: none !important; /* Force hide */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header text-center">
+            <h1 class="text-blue-600">Recent Kids</h1>
+        </header>
+
+        <main>
+            <div id="kidListView">
+                <div class="kid-list" id="kidList">
+                    </div>
+                <p class="info-message" id="infoMessage">Click on a kid to start a conversation!</p>
+            </div>
+
+            <div id="chatView" class="chat-view hidden">
+                <div class="chat-header">
+                    <button id="backToKidsButton" class="back-button">← Back</button>
+                    <h2 id="selectedKidNameDisplay" class="chat-kid-name"></h2>
+                </div>
+                <div id="messageDisplayArea" class="message-display-area">
+                    </div>
+                <div class="message-input-container">
+                    <input type="text" id="messageInput" class="message-input" placeholder="Type your message...">
+                    <button id="sendMessageButton" class="send-button">Send</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Data for the kids, now including a messages array for each kid
+        const kidsData = [
+            {
+                id: 'kid1',
+                name: 'Alice',
+                avatar: 'A',
+                messages: [
+                    { sender: 'Alice', text: 'Hi there! How are you?', time: '10:00 AM', timestamp: new Date('2025-05-19T10:00:00').getTime() },
+                    { sender: 'You', text: 'Hey Alice! I am doing great, thanks!', time: '10:01 AM', timestamp: new Date('2025-05-19T10:01:00').getTime() },
+                    { sender: 'Alice', text: 'I\'m doing super well! Just finished drawing a rainbow. What about you?', time: '10:05 AM', timestamp: new Date('2025-05-19T10:05:00').getTime() },
+                    { sender: 'You', text: 'Just sent you a message!', time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), timestamp: new Date().getTime() } // User's new message
+                ]
+            },
+            {
+                id: 'kid2',
+                name: 'Bob',
+                avatar: 'B',
+                messages: [
+                    { sender: 'Bob', text: 'What are you up to today?', time: 'Yesterday', timestamp: new Date('2025-05-18T14:30:00').getTime() },
+                    { sender: 'You', text: 'Just chilling, thinking about new games!', time: 'Yesterday', timestamp: new Date('2025-05-18T14:31:00').getTime() },
+                    { sender: 'Bob', text: 'Oh, cool! What kind of games do you like?', time: 'Yesterday', timestamp: new Date('2025-05-18T14:35:00').getTime() }
+                ]
+            },
+            {
+                id: 'kid3',
+                name: 'Charlie',
+                avatar: 'C',
+                messages: [
+                    { sender: 'Charlie', text: 'I learned something new in school!', time: '2 days ago', timestamp: new Date('2025-05-17T09:00:00').getTime() },
+                    { sender: 'You', text: 'Oh, that sounds interesting! What was it?', time: '2 days ago', timestamp: new Date('2025-05-17T09:01:00').getTime() }
+                ]
+            }
+        ];
+
+        let selectedKid = null; // Stores the currently selected kid object
+
+        // Get references to HTML elements
+        const kidListContainer = document.getElementById('kidList');
+        const kidListView = document.getElementById('kidListView');
+        const chatView = document.getElementById('chatView');
+        const backToKidsButton = document.getElementById('backToKidsButton');
+        const selectedKidNameDisplay = document.getElementById('selectedKidNameDisplay');
+        const messageDisplayArea = document.getElementById('messageDisplayArea');
+        const messageInput = document.getElementById('messageInput');
+        const sendMessageButton = document.getElementById('sendMessageButton');
+        const infoMessage = document.getElementById('infoMessage');
+
+        /**
+         * Creates an HTML element for a single kid in the list.
+         * @param {object} kid - The kid object containing id, name, and avatar.
+         * @returns {HTMLElement} The created kid item element.
+         */
+        function createKidItem(kid) {
+            const kidItem = document.createElement('div');
+            kidItem.className = 'kid-item';
+            kidItem.dataset.kidId = kid.id; // Store kid ID for easy access
+
+            const avatarDiv = document.createElement('div');
+            avatarDiv.className = 'kid-avatar';
+            avatarDiv.textContent = kid.avatar; // Display avatar initial
+
+            const nameP = document.createElement('p');
+            nameP.className = 'kid-name';
+            nameP.textContent = kid.name;
+
+            kidItem.appendChild(avatarDiv);
+            kidItem.appendChild(nameP);
+
+            // Add click event listener to each kid item to switch to chat view
+            kidItem.addEventListener('click', () => {
+                // Remove 'selected' class from all kid items
+                document.querySelectorAll('.kid-item').forEach(item => {
+                    item.classList.remove('selected');
+                });
+                // Add 'selected' class to the clicked kid item
+                kidItem.classList.add('selected');
+
+                showChatView(kid); // Show the chat view for the selected kid
+            });
+
+            return kidItem;
+        }
+
+        /**
+         * Renders all kid items into the kid list container, sorted by most recent message.
+         */
+        function renderKids() {
+            kidListContainer.innerHTML = ''; // Clear existing content
+
+            // Sort kidsData by the timestamp of their most recent message
+            // If a kid has no messages, treat their timestamp as 0 (least recent)
+            const sortedKids = [...kidsData].sort((a, b) => {
+                const lastMessageA = a.messages.length > 0 ? a.messages[a.messages.length - 1] : null;
+                const lastMessageB = b.messages.length > 0 ? b.messages[b.messages.length - 1] : null;
+
+                const timestampA = lastMessageA ? lastMessageA.timestamp : 0;
+                const timestampB = lastMessageB ? lastMessageB.timestamp : 0;
+
+                return timestampB - timestampA; // Sort in descending order (most recent first)
+            });
+
+            sortedKids.forEach(kid => {
+                kidListContainer.appendChild(createKidItem(kid));
+            });
+        }
+
+        /**
+         * Creates an HTML element for a single chat message.
+         * @param {object} message - The message object containing sender, text, and time.
+         * @returns {HTMLElement} The created message bubble element.
+         */
+        function createChatMessageElement(message) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('chat-message');
+            // Add class based on sender for styling (e.g., align left/right)
+            messageDiv.classList.add(message.sender === 'You' ? 'from-you' : 'from-kid');
+
+            const senderP = document.createElement('p');
+            senderP.classList.add('chat-message-sender');
+            senderP.textContent = message.sender;
+
+            const textP = document.createElement('p');
+            textP.classList.add('chat-message-text');
+            textP.textContent = message.text;
+
+            const timeP = document.createElement('p');
+            timeP.classList.add('chat-message-time');
+            timeP.textContent = message.time;
+
+            messageDiv.appendChild(senderP);
+            messageDiv.appendChild(textP);
+            messageDiv.appendChild(timeP);
+
+            return messageDiv;
+        }
+
+        /**
+         * Renders messages for the currently selected kid in the chat display area.
+         * @param {object} kid - The kid object whose messages are to be displayed.
+         */
+        function renderMessages(kid) {
+            messageDisplayArea.innerHTML = ''; // Clear existing messages
+            // Display messages in chronological order (oldest first)
+            kid.messages.forEach(message => {
+                messageDisplayArea.appendChild(createChatMessageElement(message));
+            });
+            // Scroll to the bottom of the message area to show latest messages
+            messageDisplayArea.scrollTop = messageDisplayArea.scrollHeight;
+        }
+
+        /**
+         * Shows the kid list view and hides the chat view.
+         */
+        function showKidList() {
+            chatView.classList.add('hidden'); // Hide chat view
+            kidListView.classList.remove('hidden'); // Show kid list view
+            infoMessage.style.display = 'block'; // Show info message
+            selectedKid = null; // Clear selected kid
+            // Remove 'selected' class from all kid items
+            document.querySelectorAll('.kid-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            messageInput.value = ''; // Clear input field
+            renderKids(); // Re-render kids list to ensure correct sorting
+        }
+
+        /**
+         * Shows the chat view for a specific kid and hides the kid list view.
+         * @param {object} kid - The kid object to display the chat for.
+         */
+        function showChatView(kid) {
+            selectedKid = kid; // Set the selected kid
+            kidListView.classList.add('hidden'); // Hide kid list view
+            chatView.classList.remove('hidden'); // Show chat view
+            infoMessage.style.display = 'none'; // Hide info message
+
+            selectedKidNameDisplay.textContent = kid.name; // Set chat header name
+            renderMessages(kid); // Render messages for the selected kid
+            messageInput.focus(); // Focus on the input field
+        }
+
+        // Event listener for the send message button
+        sendMessageButton.addEventListener('click', () => {
+            const messageText = messageInput.value.trim();
+            if (messageText !== '' && selectedKid) {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                const newMessage = {
+                    sender: 'You',
+                    text: messageText,
+                    time: timeString,
+                    timestamp: now.getTime() // Add timestamp for sorting
+                };
+
+                // Add the new message to the selected kid's messages array
+                selectedKid.messages.push(newMessage);
+
+                // Re-render messages to show the new message
+                renderMessages(selectedKid);
+
+                messageInput.value = ''; // Clear the input field
+            }
+        });
+
+        // Event listener for the back button in the chat view
+        backToKidsButton.addEventListener('click', showKidList);
+
+        // Initial rendering of kid items when the page loads
+        document.addEventListener('DOMContentLoaded', renderKids);
+    </script>
+</body>
+</html>
