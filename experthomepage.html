@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Kids Talk Pro – Chat</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap"
+    rel="stylesheet"
+  />
+</head>
+<body class="bg-gray-100 font-sans min-h-screen flex items-center justify-center p-4">
+  <div class="bg-white rounded-2xl shadow-lg w-full max-w-xl">
+    <!-- Header -->
+    <header class="p-6 text-center">
+      <h1 class="text-2xl font-bold text-green-600">Recent Kids</h1>
+      <p class="text-gray-600 text-sm">Click a kid to chat</p>
+    </header>
+
+    <main class="divide-y">
+      <!-- Kid List -->
+      <div id="kidList" class="p-4 space-y-3">
+        <!-- JS will inject .kid-item here -->
+      </div>
+
+      <!-- Chat View (hidden until a kid is clicked) -->
+      <div id="chatView" class="hidden flex flex-col h-96">
+        <div class="flex items-center bg-green-500 text-white p-3 rounded-t-2xl">
+          <button id="backBtn" class="mr-4 font-bold">←</button>
+          <h2 id="kidName" class="text-lg font-semibold"></h2>
+        </div>
+        <div id="messages" class="flex-1 p-4 overflow-auto space-y-2 bg-gray-50"></div>
+        <div class="flex p-3 bg-white rounded-b-2xl">
+          <input id="msgIn" type="text" placeholder="Type…" class="flex-1 border rounded-full px-4 py-2 focus:outline-none" />
+          <button id="sendBtn" class="ml-2 bg-green-500 hover:bg-green-600 text-white rounded-full px-4 py-2">Send</button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Sample data
+    const kids = [
+      { id:'kid1', name:'Alice', avatar:'A', messages:[
+          { from:'Alice', text:'Hi!', time:'10:00 AM' },
+          { from:'You', text:'Hello!', time:'10:01 AM' },
+        ]
+      },
+      { id:'kid2', name:'Bob', avatar:'B', messages:[
+          { from:'Bob', text:'Good morning', time:'Yesterday' }
+        ]
+      }
+    ];
+
+    const kidListEl = document.getElementById('kidList');
+    const chatViewEl = document.getElementById('chatView');
+    const backBtn = document.getElementById('backBtn');
+    const kidNameEl = document.getElementById('kidName');
+    const messagesEl = document.getElementById('messages');
+    const msgIn = document.getElementById('msgIn');
+    const sendBtn = document.getElementById('sendBtn');
+    let currentKid = null;
+
+    // Render the clickable list of kids
+    kids.forEach(k => {
+      const div = document.createElement('div');
+      div.className = 'flex items-center bg-white p-3 rounded-lg hover:bg-gray-50 cursor-pointer';
+      div.innerHTML = `<div class="w-10 h-10 bg-green-200 rounded-full flex items-center justify-center mr-3 font-bold">${k.avatar}</div>
+                       <span class="font-medium">${k.name}</span>`;
+      div.onclick = () => openChat(k);
+      kidListEl.appendChild(div);
+    });
+
+    function openChat(kid){
+      currentKid = kid;
+      kidNameEl.textContent = kid.name;
+      kidListEl.parentElement.querySelectorAll('#kidList, .info-message').forEach(el => el.classList.add('hidden'));
+      chatViewEl.classList.remove('hidden');
+      renderMessages();
+    }
+
+    function renderMessages(){
+      messagesEl.innerHTML = '';
+      currentKid.messages.forEach(m => {
+        const wrapper = document.createElement('div');
+        wrapper.className = `max-w-xs p-2 rounded-lg ${m.from==='You'?'bg-green-100 self-end':'bg-white'}`;
+        wrapper.innerHTML = `<p class="text-sm"><strong>${m.from}</strong></p>
+                             <p>${m.text}</p>
+                             <p class="text-xs text-gray-500 text-right">${m.time}</p>`;
+        messagesEl.appendChild(wrapper);
+      });
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+
+    backBtn.onclick = () => {
+      chatViewEl.classList.add('hidden');
+      kidListEl.parentElement.querySelectorAll('#kidList').forEach(el => el.classList.remove('hidden'));
+    };
+
+    sendBtn.onclick = () => {
+      const txt = msgIn.value.trim();
+      if (!txt) return;
+      const now = new Date();
+      currentKid.messages.push({
+        from: 'You',
+        text: txt,
+        time: now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})
+      });
+      msgIn.value = '';
+      renderMessages();
+    };
+  </script>
+</body>
+</html>
