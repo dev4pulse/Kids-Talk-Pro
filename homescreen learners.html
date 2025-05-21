@@ -1,0 +1,273 @@
+html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kids Talk Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body, html { height: 100%; margin: 0; font-family: 'Nunito', sans-serif; background-color: #e8f0fa; }
+        .hidden { display: none !important; }
+        .container {
+            background-color: #ffffff; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            padding: 20px; max-width: 600px; width: 95%; margin: 20px auto; display: flex; flex-direction: column;
+        }
+        .header h1 { color: #25d366; font-size: 2.5rem; font-weight: 700; margin-bottom: 20px; text-align: center; }
+        .kid-list { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+        .kid-item { display: flex; align-items: center; padding: 12px 15px; background-color: #f0f0f0;
+            border-radius: 8px; cursor: pointer; transition: background-color 0.2s ease; }
+        .kid-item:hover { background-color: #e0e0e0; }
+        .kid-item.selected { background-color: #c8e6c9; border: 2px solid #25d366; }
+        .kid-avatar { width: 50px; height: 50px; border-radius: 50%; background-color: #aed581; display: flex;
+            justify-content: center; align-items: center; color: white; font-size: 1.5rem; font-weight: 600;
+            margin-right: 15px; flex-shrink: 0; }
+        .kid-name { font-size: 1.1rem; font-weight: 600; color: #333; }
+        .info-message { text-align: center; margin-top: 15px; color: #666; font-style: italic; font-size: 0.9rem; }
+        .chat-view { display: flex; flex-direction: column; height: 500px; border: 1px solid #e0e0e0;
+            border-radius: 12px; overflow: hidden; margin-top: 20px; }
+        .chat-header { display: flex; align-items: center; padding: 10px 15px; background-color: #25d366; color: white;
+            border-top-left-radius: 12px; border-top-right-radius: 12px; }
+        .chat-header .back-button { background-color: #ef4444; border: 2px solid #dc2626; color: white; font-size: 1.2rem;
+            font-weight: 700; cursor: pointer; margin-right: 15px; padding: 8px 15px; border-radius: 8px;
+            transition: background-color 0.2s ease, opacity 0.2s ease; }
+        .chat-header .back-button:hover { background-color: #dc2626; opacity: 0.9; }
+        .chat-kid-name { font-size: 1.2rem; font-weight: 600; margin: 0; }
+        .message-display-area { flex: 1; padding: 15px; overflow-y: auto; background-color: #fcfcfc; display: flex;
+            flex-direction: column; gap: 10px; }
+        .chat-message { max-width: 70%; padding: 8px 12px; border-radius: 15px; word-wrap: break-word;
+            box-shadow: 0 1px 1px rgba(0,0,0,0.05); }
+        .chat-message.from-kid { background-color: #e2f7cb; align-self: flex-start; }
+        .chat-message.from-you { background-color: #dcf8c6; align-self: flex-end; }
+        .chat-message-sender { font-size: 0.8rem; font-weight: 600; color: #555; margin-bottom: 2px; }
+        .chat-message-text { font-size: 0.95rem; color: #333; }
+        .chat-message-time { font-size: 0.7rem; color: #888; text-align: right; margin-top: 5px; }
+        .message-input-container { display: flex; align-items: center; padding: 10px; border-top: 1px solid #e0e0e0;
+            background-color: #f8f8f8; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; }
+        .message-input { flex: 1; padding: 10px 15px; border: 1px solid #ccc; border-radius: 20px; font-size: 1rem;
+            outline: none; transition: border-color 0.2s ease; }
+        .message-input:focus { border-color: #25d366; }
+        .send-button { background-color: #25d366; color: white; padding: 10px 20px; border-radius: 20px;
+            font-size: 1rem; font-weight: 600; cursor: pointer; transition: background-color 0.3s ease;
+            margin-left: 10px; border: none; }
+        .send-button:hover { background-color: #128c7e; }
+    </style>
+</head>
+<body>
+    <!-- LOGIN PAGE -->
+    <div id="loginPage" class="flex items-center justify-center min-h-screen">
+        <div class="bg-white p-8 rounded-lg shadow-lg w-80 flex flex-col gap-4">
+            <h2 class="text-2xl font-bold text-green-600 text-center">Kids Talk Pro</h2>
+            <input id="usernameInput" type="text" class="border rounded p-2" placeholder="Enter your name">
+            <input id="passwordInput" type="password" class="border rounded p-2" placeholder="Password">
+            <button id="loginButton" class="bg-green-500 text-white rounded p-2 font-bold hover:bg-green-600">Log In</button>
+            <p id="loginError" class="text-red-500 text-center hidden">Please enter your name and password!</p>
+        </div>
+    </div>
+
+    <!-- CHAT PAGE (starts hidden) -->
+    <div id="chatPage" class="container hidden">
+        <header class="header text-center">
+            <h1 class="text-blue-600">Recent Kids</h1>
+        </header>
+        <main>
+            <div id="kidListView">
+                <div class="kid-list" id="kidList"></div>
+                <p class="info-message" id="infoMessage">Click on a kid to start a conversation!</p>
+            </div>
+            <div id="chatView" class="chat-view hidden">
+                <div class="chat-header">
+                    <button id="backToKidsButton" class="back-button">← Back</button>
+                    <h2 id="selectedKidNameDisplay" class="chat-kid-name"></h2>
+                </div>
+                <div id="messageDisplayArea" class="message-display-area"></div>
+                <div class="message-input-container">
+                    <input type="text" id="messageInput" class="message-input" placeholder="Type your message...">
+                    <button id="sendMessageButton" class="send-button">Send</button>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script>
+        // --- LOGIN LOGIC ---
+        const loginPage = document.getElementById('loginPage');
+        const chatPage = document.getElementById('chatPage');
+        const loginButton = document.getElementById('loginButton');
+        const loginError = document.getElementById('loginError');
+        const usernameInput = document.getElementById('usernameInput');
+        const passwordInput = document.getElementById('passwordInput');
+
+        loginButton.onclick = function() {
+            if(usernameInput.value.trim() && passwordInput.value.trim()) {
+                loginPage.classList.add('hidden');
+                chatPage.classList.remove('hidden');
+            } else {
+                loginError.classList.remove('hidden');
+            }
+        };
+        usernameInput.addEventListener('keydown', e => { if(e.key === "Enter") passwordInput.focus(); });
+        passwordInput.addEventListener('keydown', e => { if(e.key === "Enter") loginButton.click(); });
+
+        // --- CHAT UI LOGIC ---
+        const kidsData = [
+            {
+                id: 'kid1',
+                name: 'Student 1',
+                avatar: 'S1',
+                messages: [
+                    { sender: 'Student 1', text: 'Hello Expert!', time: '10:00 AM', timestamp: new Date('2025-05-19T10:00:00').getTime() },
+                    { sender: 'You', text: 'Hello there! How can I help you?', time: '10:01 AM', timestamp: new Date('2025-05-19T10:01:00').getTime() },
+                ]
+            },
+            {
+                id: 'kid2',
+                name: 'Student 2',
+                avatar: 'S2',
+                messages: [
+                    { sender: 'Student 2', text: 'What are we learning today?', time: 'Yesterday', timestamp: new Date('2025-05-18T14:30:00').getTime() }
+                ]
+            },
+            {
+                id: 'kid3',
+                name: 'Student 3',
+                avatar: 'S3',
+                messages: [
+                    { sender: 'Student 3', text: 'I finished my homework!', time: '2 days ago', timestamp: new Date('2025-05-17T09:00:00').getTime() }
+                ]
+            }
+        ];
+        let selectedKid = null;
+        const kidListContainer = document.getElementById('kidList');
+        const kidListView = document.getElementById('kidListView');
+        const chatView = document.getElementById('chatView');
+        const backToKidsButton = document.getElementById('backToKidsButton');
+        const selectedKidNameDisplay = document.getElementById('selectedKidNameDisplay');
+        const messageDisplayArea = document.getElementById('messageDisplayArea');
+        const messageInput = document.getElementById('messageInput');
+        const sendMessageButton = document.getElementById('sendMessageButton');
+        const infoMessage = document.getElementById('infoMessage');
+
+        function createKidItem(kid) {
+            const kidItem = document.createElement('div');
+            kidItem.className = 'kid-item';
+            kidItem.dataset.kidId = kid.id;
+
+            const avatarDiv = document.createElement('div');
+            avatarDiv.className = 'kid-avatar';
+            avatarDiv.textContent = kid.avatar;
+
+            const nameP = document.createElement('p');
+            nameP.className = 'kid-name';
+            nameP.textContent = kid.name;
+
+            kidItem.appendChild(avatarDiv);
+            kidItem.appendChild(nameP);
+
+            kidItem.addEventListener('click', () => {
+                document.querySelectorAll('.kid-item').forEach(item => {
+                    item.classList.remove('selected');
+                });
+                kidItem.classList.add('selected');
+                showChatView(kid);
+            });
+
+            return kidItem;
+        }
+
+        function renderKids() {
+            kidListContainer.innerHTML = '';
+            const sortedKids = [...kidsData].sort((a, b) => {
+                const lastMessageA = a.messages.length > 0 ? a.messages[a.messages.length - 1] : null;
+                const lastMessageB = b.messages.length > 0 ? b.messages[b.messages.length - 1] : null;
+                const timestampA = lastMessageA ? lastMessageA.timestamp : 0;
+                const timestampB = lastMessageB ? lastMessageB.timestamp : 0;
+                return timestampB - timestampA;
+            });
+            sortedKids.forEach(kid => {
+                kidListContainer.appendChild(createKidItem(kid));
+            });
+        }
+
+        function createChatMessageElement(message) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('chat-message');
+            messageDiv.classList.add(message.sender === 'You' ? 'from-you' : 'from-kid');
+
+            const senderP = document.createElement('p');
+            senderP.classList.add('chat-message-sender');
+            senderP.textContent = message.sender;
+
+            const textP = document.createElement('p');
+            textP.classList.add('chat-message-text');
+            textP.textContent = message.text;
+
+            const timeP = document.createElement('p');
+            timeP.classList.add('chat-message-time');
+            timeP.textContent = message.time;
+
+            messageDiv.appendChild(senderP);
+            messageDiv.appendChild(textP);
+            messageDiv.appendChild(timeP);
+
+            return messageDiv;
+        }
+
+        function renderMessages(kid) {
+            messageDisplayArea.innerHTML = '';
+            kid.messages.forEach(message => {
+                messageDisplayArea.appendChild(createChatMessageElement(message));
+            });
+            messageDisplayArea.scrollTop = messageDisplayArea.scrollHeight;
+        }
+
+        function showKidList() {
+            chatView.classList.add('hidden');
+            kidListView.classList.remove('hidden');
+            infoMessage.style.display = 'block';
+            selectedKid = null;
+            document.querySelectorAll('.kid-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            messageInput.value = '';
+            renderKids();
+        }
+
+        function showChatView(kid) {
+            selectedKid = kid;
+            kidListView.classList.add('hidden');
+            chatView.classList.remove('hidden');
+            infoMessage.style.display = 'none';
+            selectedKidNameDisplay.textContent = kid.name;
+            renderMessages(kid);
+            messageInput.focus();
+        }
+
+        sendMessageButton.addEventListener('click', () => {
+            const messageText = messageInput.value.trim();
+            if (messageText !== '' && selectedKid) {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const newMessage = {
+                    sender: 'You',
+                    text: messageText,
+                    time: timeString,
+                    timestamp: now.getTime()
+                };
+                selectedKid.messages.push(newMessage);
+                renderMessages(selectedKid);
+                messageInput.value = '';
+                renderKids();
+            }
+        });
+
+        messageInput.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') {
+                sendMessageButton.click();
+            }
+        });
+
+        backToKidsButton.addEventListener('click', showKidList);
+
+        document.addEventListener('DOMContentLoaded', renderKids);
+    </script>
+</body>
+</html>
