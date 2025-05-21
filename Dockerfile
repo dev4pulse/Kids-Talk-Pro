@@ -10,5 +10,7 @@ COPY . /usr/share/nginx/html
 # Expose port 8080 (Cloud Run expects this)
 EXPOSE 8080
 
+RUN chmod 644 Kids-Talk-Pro-buttons.html homepage.html experts-talk-pro-homepage.html
+
 # Change Nginx config to listen on 8080
 RUN sed -i 's/80;/8080;/' /etc/nginx/conf.d/default.conf
