@@ -1,115 +1,109 @@
+<!-- homepage.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Kids Talk Pro – Recent Experts</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kids Talk Pro - Home</title>
+  <!-- Vue.js CDN -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <!-- TailwindCSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap"
-    rel="stylesheet"
-  />
 </head>
-<body class="bg-gradient-to-r from-blue-100 to-green-100 font-sans min-h-screen flex items-start p-4">
-  <div class="bg-white rounded-2xl shadow-lg w-full max-w-xl mx-auto mt-6 p-6">
-    <!-- Header -->
-    <header class="text-center mb-6">
-      <h1 class="text-2xl font-bold text-green-600">Recent Experts</h1>
-      <p class="text-gray-600 text-sm">Tap a subject to see the latest post</p>
-    </header>
+<body>
+  <div id="homepage-app" class="min-h-screen bg-gray-100 p-6">
+    <!-- Navigation -->
+    <nav class="flex justify-between items-center mb-8 bg-white p-4 rounded shadow">
+      <div class="text-2xl font-bold">Kids Talk Pro</div>
+      <ul class="flex space-x-4">
+        <li><a href="#" class="hover:text-blue-600">Home</a></li>
+        <li><a href="#teachers" class="hover:text-blue-600">Teachers</a></li>
+        <li><a href="#contact" class="hover:text-blue-600">Contact</a></li>
+      </ul>
+      <button @click="goToLogout" class="px-4 py-2 bg-blue-600 text-white rounded">Logout</button>
+    </nav>
 
-    <!-- Subject cards -->
-    <div class="space-y-4">
-      <div data-subject="math" class="subject p-4 bg-gray-100 rounded-lg hover:bg-gray-200 cursor-pointer">
-        <h2 class="font-semibold text-lg mb-2 text-center">Math</h2>
-        <div class="message-list"></div>
+    <!-- Teachers List -->
+    <section id="teachers" class="bg-white p-6 rounded shadow">
+      <h2 class="text-3xl font-semibold mb-4">Our Teachers</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div v-for="(teacher, idx) in teachers" :key="idx" class="border p-4 rounded hover:shadow-lg transition">
+          <h3 class="text-xl font-bold mb-1">{{ teacher.name }}</h3>
+          <p class="text-gray-600 mb-3">Subject: {{ teacher.subject }}</p>
+          <button @click="openChat(teacher)" class="px-4 py-2 bg-green-500 text-white rounded">Chat</button>
+        </div>
       </div>
-      <div data-subject="ela" class="subject p-4 bg-gray-100 rounded-lg hover:bg-gray-200 cursor-pointer">
-        <h2 class="font-semibold text-lg mb-2 text-center">ELA</h2>
-        <div class="message-list"></div>
+    </section>
+
+    <!-- Chat Modal -->
+    <div v-if="chatOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+      <div class="bg-white w-full max-w-md rounded shadow-lg p-4">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-xl font-bold">Chat with {{ currentTeacher.name }}</h3>
+          <button @click="closeChat" class="text-gray-500 hover:text-gray-800">✕</button>
+        </div>
+        <div class="h-64 overflow-y-auto border p-2 mb-4">
+          <div v-for="(msg, idx) in messages" :key="idx" class="mb-2">
+            <span :class="{'font-bold': msg.from === 'Teacher'}">{{ msg.from }}:</span> {{ msg.text }}
+          </div>
+        </div>
+        <div class="flex">
+          <input v-model="newMessage" @keyup.enter="sendMessage" type="text" placeholder="Type a message..." class="flex-1 border rounded-l px-2 py-1" />
+          <button @click="sendMessage" class="px-4 bg-blue-600 text-white rounded-r">Send</button>
+        </div>
       </div>
     </div>
-
-    <!-- Message input (hidden until a subject is tapped) -->
-    <div id="inputArea" class="mt-6 hidden flex space-x-2">
-      <input
-        id="msgIn"
-        type="text"
-        placeholder="Type your message…"
-        class="flex-1 border rounded-full px-4 py-2 focus:outline-none"
-      />
-      <button id="sendBtn" class="bg-green-500 hover:bg-green-600 text-white rounded-full px-4 py-2">
-        Send
-      </button>
-    </div>
-
-    <!-- Back to login -->
-    <div class="text-center mt-6">
-      <a href="selection.html" class="text-blue-500 hover:underline">← Back to Login</a>
-    </div>
-
-    <!-- Footer -->
-    <footer class="text-center text-gray-500 text-xs mt-6">
-      &copy; <span id="year"></span> Kids Talk Pro
-    </footer>
   </div>
 
+  <!-- Vue App Script -->
   <script>
-    // Sample expert posts
-    const data = {
-      math: [{ sender: "Dr. Ishan", msg: "Just solved a calculus problem!", time: "10:30 AM" }],
-      ela: [{ sender: "Prof. Hari", msg: "Reviewed a poem today!", time: "Yesterday" }]
-    };
-
-    // Setup year
-    document.getElementById("year").textContent = new Date().getFullYear();
-
-    let selected = null;
-    const inputArea = document.getElementById("inputArea");
-    const msgIn = document.getElementById("msgIn");
-    const sendBtn = document.getElementById("sendBtn");
-
-    // Render the most recent post into a subject's .message-list
-    function render(subject) {
-      const list = document.querySelector(`[data-subject="${subject}"] .message-list`);
-      list.innerHTML = "";
-      const { sender, msg, time } = data[subject][0];
-      list.innerHTML = `
-        <div class="flex items-center space-x-3">
-          <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-white font-bold">${sender.charAt(0)}</div>
-          <div class="flex-1 min-w-0">
-            <p class="font-medium text-gray-800 truncate">${sender}</p>
-            <p class="text-gray-600 text-sm truncate">${msg}</p>
-          </div>
-          <p class="text-gray-500 text-xs">${time}</p>
-        </div>`;
-    }
-
-    // Initialize lists
-    ["math","ela"].forEach(subj => render(subj));
-
-    // Subject click handler
-    document.querySelectorAll(".subject").forEach(div => {
-      div.addEventListener("click", ()=>{
-        selected = div.dataset.subject;
-        inputArea.classList.remove("hidden");
-        document.querySelectorAll(".subject").forEach(d=>d.classList.remove("bg-green-50"));
-        div.classList.add("bg-green-50");
-      });
-    });
-
-    // Send new post
-    sendBtn.addEventListener("click", ()=>{
-      const txt = msgIn.value.trim();
-      if(!txt||!selected) return;
-      data[selected].unshift({
-        sender: "You",
-        msg: txt,
-        time: new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})
-      });
-      render(selected);
-      msgIn.value="";
-    });
+    const { createApp } = Vue;
+    createApp({
+      data() {
+        return {
+          teachers: [
+            { name: 'Alice Johnson', subject: 'Mathematics' },
+            { name: 'Brian Smith', subject: 'English' },
+            { name: 'Clara Lee', subject: 'Science' },
+            { name: 'David Patel', subject: 'History' },
+            { name: 'Eva Wong', subject: 'Art' }
+          ],
+          chatOpen: false,
+          currentTeacher: null,
+          messages: [],
+          newMessage: ''
+        };
+      },
+      methods: {
+        openChat(teacher) {
+          this.currentTeacher = teacher;
+          this.chatOpen = true;
+          this.messages = [
+            { from: teacher.name, text: `Hello! How can I help you with ${teacher.subject}?` }
+          ];
+        },
+        closeChat() {
+          this.chatOpen = false;
+          this.newMessage = '';
+        },
+        sendMessage() {
+          if (!this.newMessage.trim()) return;
+          this.messages.push({ from: 'You', text: this.newMessage });
+          // Simulate teacher reply
+          setTimeout(() => {
+            this.messages.push({ from: this.currentTeacher.name, text: 'Thanks for your message! I will get back to you shortly.' });
+          }, 1000);
+          this.newMessage = '';
+          this.$nextTick(() => {
+            const container = this.$el.querySelector('.overflow-y-auto');
+            container.scrollTop = container.scrollHeight;
+          });
+        },
+        goToLogout() {
+          window.location.href = 'learner.html';
+        }
+      }
+    }).mount('#homepage-app');
   </script>
 </body>
 </html>
