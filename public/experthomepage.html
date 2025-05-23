@@ -1,0 +1,124 @@
+<!-- experthompage.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kids Talk Pro - Expert Home</title>
+  <!-- Vue.js CDN -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <!-- TailwindCSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+  <div id="expert-app" class="max-w-5xl mx-auto p-6">
+    <!-- Header -->
+    <header class="flex justify-between items-center mb-8">
+      <h1 class="text-3xl font-bold">Welcome, {{ expert.name }}</h1>
+      <button @click="logout" class="px-4 py-2 bg-red-500 text-white rounded">Logout</button>
+    </header>
+    <!-- Tabs Navigation -->
+    <nav class="flex space-x-4 mb-8">
+      <button v-for="tab in tabs" :key="tab" @click="selectedTab = tab" :class="{'border-b-2 border-blue-600': selectedTab === tab}" class="px-4 py-2">
+        {{ tab }}
+      </button>
+    </nav>
+    <!-- Profile Tab -->
+    <section v-if="selectedTab === 'Profile'" class="bg-white p-6 rounded shadow">
+      <p><strong>Email:</strong> {{ expert.email }}</p>
+      <p><strong>Expertise:</strong> {{ expert.expertise }}</p>
+      <p><strong>Bio:</strong> {{ expert.bio }}</p>
+    </section>
+    <!-- Schedule Tab -->
+    <section v-if="selectedTab === 'Schedule'" class="bg-white p-6 rounded shadow">
+      <h2 class="text-xl mb-4">Upcoming Sessions</h2>
+      <ul>
+        <li v-for="(session, idx) in schedule" :key="idx" class="mb-2 flex justify-between">
+          <span>{{ session.date }} - {{ session.topic }}</span>
+          <button @click="cancelSession(idx)" class="text-red-500">Cancel</button>
+        </li>
+      </ul>
+    </section>
+    <!-- Students & Chat Tab -->
+    <section v-if="selectedTab === 'Messages'" class="bg-white p-6 rounded shadow">
+      <h2 class="text-xl mb-4">Students</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div v-for="(student, idx) in students" :key="idx" class="border p-4 rounded hover:shadow-lg transition flex justify-between items-center">
+          <span>{{ student.name }}</span>
+          <button @click="openStudentChat(student)" class="px-3 py-1 bg-green-500 text-white rounded">Chat</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Chat Modal for Students -->
+    <div v-if="studentChatOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+      <div class="bg-white w-full max-w-md rounded shadow-lg p-4">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-xl font-bold">Chat with {{ currentStudent.name }}</h3>
+          <button @click="closeStudentChat" class="text-gray-500 hover:text-gray-800">✕</button>
+        </div>
+        <div class="h-64 overflow-y-auto border p-2 mb-4">
+          <div v-for="(msg, idx) in studentMessages" :key="idx" class="mb-2">
+            <span :class="{'font-bold': msg.from === currentStudent.name}">{{ msg.from }}:</span> {{ msg.text }}
+          </div>
+        </div>
+        <div class="flex">
+          <input v-model="newStudentMessage" @keyup.enter="sendStudentMessage" type="text" placeholder="Type a message..." class="flex-1 border rounded-l px-2 py-1" />
+          <button @click="sendStudentMessage" class="px-4 bg-blue-600 text-white rounded-r">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Vue App Script -->
+  <script>
+    const { createApp } = Vue;
+    createApp({
+      data() {
+        return {
+          expert: { name: 'Expert Name', email: 'expert@example.com', expertise: 'Language Coaching', bio: 'I help learners achieve fluency.' },
+          tabs: ['Profile', 'Schedule', 'Messages'],
+          selectedTab: 'Profile',
+          schedule: [ { date: '2025-05-22 10:00', topic: 'Spanish Lesson' }, { date: '2025-05-23 14:00', topic: 'English Pronunciation' } ],
+          students: [
+            { name: 'Student A' },
+            { name: 'Student B' },
+            { name: 'Student C' }
+          ],
+          studentChatOpen: false,
+          currentStudent: null,
+          studentMessages: [],
+          newStudentMessage: ''
+        };
+      },
+      methods: {
+        cancelSession(idx) { this.schedule.splice(idx, 1); },
+        logout() { window.location.href = 'expert.html'; },
+        openStudentChat(student) {
+          this.currentStudent = student;
+          this.studentChatOpen = true;
+          this.studentMessages = [
+            { from: student.name, text: 'Hi, how can I assist you today?' }
+          ];
+        },
+        closeStudentChat() {
+          this.studentChatOpen = false;
+          this.newStudentMessage = '';
+        },
+        sendStudentMessage() {
+          if (!this.newStudentMessage.trim()) return;
+          this.studentMessages.push({ from: 'You', text: this.newStudentMessage });
+          // Simulate student reply
+          setTimeout(() => {
+            this.studentMessages.push({ from: this.currentStudent.name, text: 'Thanks, got it!' });
+          }, 1000);
+          this.newStudentMessage = '';
+          this.$nextTick(() => {
+            const container = this.$el.querySelector('.overflow-y-auto');
+            container.scrollTop = container.scrollHeight;
+          });
+        }
+      }
+    }).mount('#expert-app');
+  </script>
+</body>
+</html>
